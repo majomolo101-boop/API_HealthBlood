@@ -1,7 +1,14 @@
 # Etapa 1: Compilar el proyecto con Maven y Java 21
 FROM maven:3.9-eclipse-temurin-21 AS builder
 WORKDIR /app
-COPY . .
+
+# Copiamos primero el pom.xml para validar la estructura del proyecto
+COPY pom.xml .
+
+# Copiamos el resto de las carpetas (como src)
+COPY src ./src
+
+# Ejecutamos el empaquetado
 RUN mvn clean package -DskipTests
 
 # Etapa 2: Copiar el WAR generado al servidor Tomcat 10
