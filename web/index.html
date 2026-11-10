@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aliado API - Registro y Control de Glucosa</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            /* Palette: Deep Blues, Soft Aqua, Warm Beige & Cream */
+            --bg-gradient: linear-gradient(135deg, #0d1b2a 0%, #1b263b 40%, #2b3a4e 100%);
+            --accent-blue: #3a86ff;
+            --light-blue: #64dfdf;
+            --beige-dark: #d4a373;
+            --beige-main: #e9edc9;
+            --beige-light: #fefae0;
+            --beige-cream: #faedcd;
+            
+            /* Glassmorphism System */
+            --glass-bg: rgba(255, 255, 255, 0.07);
+            --glass-bg-hover: rgba(255, 255, 255, 0.12);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --glass-border-hover: rgba(100, 223, 223, 0.4);
+            --glass-blur: blur(16px);
+            
+            /* Shadows */
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.25);
+            --shadow-hover: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 25px rgba(58, 134, 255, 0.25);
+            --text-glow: 0 0 15px rgba(100, 223, 223, 0.3);
+
+            /* Text Colors */
+            --text-main: #f8f9fa;
+            --text-sub: #d1d5db;
+            --text-accent: #fefae0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Ambient Glow Background Spheres */
+        .ambient-glow {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(90px);
+            z-index: -1;
+            pointer-events: none;
+        }
+        .glow-1 {
+            width: 450px;
+            height: 450px;
+            background: rgba(58, 134, 255, 0.22);
+            top: -100px;
+            left: -100px;
+        }
+        .glow-2 {
+            width: 500px;
+            height: 500px;
+            background: rgba(212, 163, 115, 0.18);
+            bottom: -150px;
+            right: -100px;
+        }
+        .glow-3 {
+            width: 350px;
+            height: 350px;
+            background: rgba(100, 223, 223, 0.15);
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Glass Utility Class */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .glass-card:hover {
+            background: var(--glass-bg-hover);
+            border-color: var(--glass-border-hover);
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Navbar */
+        header {
+            position: sticky;
+            top: 20px;
+            z-index: 1000;
+            padding: 0 2rem;
+            max-width: 1280px;
+            margin: 0 auto 2rem auto;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--beige-light);
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+
+        .logo i {
+            color: var(--light-blue);
+            font-size: 1.6rem;
+            filter: drop-shadow(0 0 8px rgba(100, 223, 223, 0.6));
+        }
+
+        .logo span {
+            color: var(--accent-blue);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-sub);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--beige-light);
+            text-shadow: var(--text-glow);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-blue), #2563eb);
+            color: #fff;
+            padding: 0.65rem 1.4rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(58, 134, 255, 0.3);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(58, 134, 255, 0.5);
+            background: linear-gradient(135deg, #4895ef, var(--accent-blue));
+        }
+
+        .btn-secondary {
+            background: rgba(250, 237, 205, 0.12);
+            color: var(--beige-light);
+            padding: 0.65rem 1.4rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            border: 1px solid rgba(212, 163, 115, 0.4);
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(250, 237, 205, 0.22);
+            border-color: var(--beige-dark);
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(212, 163, 115, 0.25);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 3.5rem;
+            align-items: center;
+            padding: 3rem 0 5rem 0;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 30px;
+            background: rgba(212, 163, 115, 0.15);
+            border: 1px solid rgba(212, 163, 115, 0.3);
+            color: var(--beige-cream);
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .badge i {
+            color: var(--light-blue);
+        }
+
+        .hero-content h1 {
+            font-size: 3.2rem;
+            line-height: 1.15;
+            font-weight: 800;
+            margin-bottom: 1.2rem;
+            background: linear-gradient(135deg, #ffffff 30%, var(--beige-light) 70%, var(--light-blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-content p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--text-sub);
+            margin-bottom: 2rem;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Image Showcase Cards */
+        .hero-image-wrapper {
+            position: relative;
+        }
+
+        .hero-img-card {
+            overflow: hidden;
+            position: relative;
+            padding: 10px;
+        }
+
+        .hero-img-card img {
+            width: 100%;
+            height: 380px;
+            object-fit: cover;
+            border-radius: 14px;
+            display: block;
+            filter: brightness(0.95) contrast(1.05);
+        }
+
+        .hero-img-overlay {
+            position: absolute;
+            bottom: 25px;
+            left: 25px;
+            right: 25px;
+            padding: 1rem 1.25rem;
+            background: rgba(13, 27, 42, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .stat-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .stat-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: rgba(58, 134, 255, 0.2);
+            color: var(--light-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .stat-text h4 {
+            font-size: 0.95rem;
+            color: var(--beige-light);
+        }
+
+        .stat-text p {
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            margin: 0;
+        }
+
+        /* Section Titles */
+        .section-header {
+            text-align: center;
+            max-width: 650px;
+            margin: 0 auto 3.5rem auto;
+        }
+
+        .section-header h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--beige-light);
+            margin-bottom: 0.8rem;
+        }
+
+        .section-header p {
+            color: var(--text-sub);
+            font-size: 1rem;
+        }
+
+        /* Features Grid */
+        .features {
+            padding: 4rem 0;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+            gap: 1.8rem;
+        }
+
+        .feature-card {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .feature-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 16px;
+            background: rgba(250, 237, 205, 0.1);
+            border: 1px solid rgba(212, 163, 115, 0.3);
+            color: var(--beige-cream);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin-bottom: 1.4rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            background: var(--accent-blue);
+            color: #fff;
+            border-color: transparent;
+            transform: scale(1.08);
+            box-shadow: 0 0 20px rgba(58, 134, 255, 0.4);
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            color: var(--beige-light);
+            margin-bottom: 0.6rem;
+            font-weight: 600;
+        }
+
+        .feature-card p {
+            color: var(--text-sub);
+            font-size: 0.92rem;
+            line-height: 1.6;
+        }
+
+        /* Code Preview Section */
+        .api-preview {
+            padding: 4rem 0;
+        }
+
+        .code-window {
+            border-radius: 16px;
+            overflow: hidden;
+            background: rgba(10, 18, 30, 0.85);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-md);
+        }
+
+        .code-header {
+            background: rgba(255, 255, 255, 0.04);
+            padding: 0.8rem 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .window-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+
+        .code-title {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            font-family: 'Fira Code', monospace;
+        }
+
+        .code-body {
+            padding: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .code-body pre {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: var(--beige-light);
+            line-height: 1.6;
+        }
+
+        .code-keyword { color: #ff79c6; }
+        .code-string { color: var(--beige-main); }
+        .code-key { color: var(--light-blue); }
+        .code-number { color: #bd93f9; }
+        .code-comment { color: #6272a4; font-style: italic; }
+
+        /* Gallery / Visual Showcase Section */
+        .gallery-section {
+            padding: 4rem 0;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.8rem;
+        }
+
+        .gallery-card {
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .gallery-img-container {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .gallery-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-card:hover .gallery-img-container img {
+            transform: scale(1.08);
+        }
+
+        .gallery-content {
+            padding: 1.5rem;
+        }
+
+        .gallery-content h3 {
+            font-size: 1.15rem;
+            color: var(--beige-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .gallery-content p {
+            font-size: 0.88rem;
+            color: var(--text-sub);
+            line-height: 1.5;
+        }
+
+        /* Endpoints Quick Ref Table */
+        .endpoints-section {
+            padding: 4rem 0;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            padding: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        th {
+            padding: 1rem;
+            color: var(--beige-cream);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            font-weight: 600;
+        }
+
+        td {
+            padding: 1rem;
+            color: var(--text-sub);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .method {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .method-post { background: rgba(58, 134, 255, 0.25); color: #60a5fa; border: 1px solid rgba(58, 134, 255, 0.4); }
+        .method-get { background: rgba(34, 197, 94, 0.25); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
+        .method-put { background: rgba(234, 179, 8, 0.25); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.4); }
+
+        .endpoint-path {
+            font-family: 'Fira Code', monospace;
+            color: var(--beige-light);
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(10, 18, 30, 0.4);
+            backdrop-filter: blur(10px);
+            padding: 3rem 0 2rem 0;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-logo {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--beige-light);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .footer-links a {
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--beige-cream);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.85rem;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 900px) {
+            .hero {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            .badge {
+                margin: 0 auto 1.5rem auto;
+            }
+            .hero-buttons {
+                justify-content: center;
+            }
+            .nav-links {
+                display: none; /* Simplificado para estático */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Glow Effects -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+    <div class="ambient-glow glow-3"></div>
+
+    <!-- Header / Navbar -->
+    <header>
+        <nav class="glass-card">
+            <a href="#" class="logo">
+                <i class="fa-solid fa-heart-pulse"></i> Aliado <span>API</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#caracteristicas">Características</a></li>
+                <li><a href="#endpoints">Endpoints</a></li>
+                <li><a href="#documentacion">Documentación</a></li>
+            </ul>
+            <a href="#documentacion" class="btn-primary">
+                <i class="fa-solid fa-code"></i> Empezar
+            </a>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <div class="badge">
+                    <i class="fa-solid fa-shield-halved"></i> RESTful API v1.0 • Salud Digital
+                </div>
+                <h1>Monitoreo e Historial de Glucosa Simplificado</h1>
+                <p>La infraestructura backend ideal para conectar glucómetros, aplicaciones móviles y plataformas de salud. Registra, analiza y comparte métricas glucémicas con máxima precisión y seguridad.</p>
+                <div class="hero-buttons">
+                    <a href="#endpoints" class="btn-primary">
+                        Explorar Endpoints <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                    <a href="#ejemplo" class="btn-secondary">
+                        Ver Ejemplo JSON <i class="fa-solid fa-file-code"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="hero-image-wrapper">
+                <div class="glass-card hero-img-card">
+                    <!-- Imagen de Pixabay: Control médico / Salud digital -->
+                    <img src="https://cdn.pixabay.com/photo/2017/08/10/03/30/diabetic-2617703_1280.jpg" alt="Medición de glucosa en sangre">
+                    
+                    <div class="hero-img-overlay">
+                        <div class="stat-group">
+                            <div class="stat-icon">
+                                <i class="fa-solid fa-chart-line"></i>
+                            </div>
+                            <div class="stat-text">
+                                <h4>99.9% Uptime</h4>
+                                <p>Sincronización en tiempo real</p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-circle-check" style="color: var(--light-blue); font-size: 1.2rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Grid -->
+        <section id="caracteristicas" class="features">
+            <div class="section-header">
+                <h2>Diseñada para Aliados de la Salud</h2>
+                <p>Potencia tu solución tecnológica con características enfocadas en el seguimiento diario de la diabetes.</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="glass-card feature-card">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-notes-medical"></i>
+                    </div>
+                    <h3>Registro Múltiple</h3>
+                    <p>Permite almacenar lecturas en ayunas, pre/postprandiales y nocturnas con notas personalizadas sobre alimentación o actividad.</p>
+                </div>
+
+                <div class="glass-card feature-card">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+                    <h3>Alertas Inteligentes</h3>
+                    <p>Configuración de umbrales para detectar hiperglucemia e hipoglucemia, enviando eventos automatizados.</p>
+                </div>
+
+                <div class="glass-card feature-card">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-user-doctor"></i>
+                    </div>
+                    <h3>Sincronización Médica</h3>
+                    <p>Facilita la generación de reportes estructurados para compartir directamente con médicos o especialistas.</p>
+                </div>
+
+                <div class="glass-card feature-card">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                    <h3>Seguridad HIPAA-Compliant</h3>
+                    <p>Cifrado de datos en tránsito y en reposo mediante JWT y estándares de protección de datos de salud.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Code Preview Section -->
+        <section id="ejemplo" class="api-preview">
+            <div class="section-header">
+                <h2>Estructura de Datos Simple</h2>
+                <p>Peticiones y respuestas JSON intuitivas para integraciones rápidas en iOS, Android o Web.</p>
+            </div>
+
+            <div class="code-window">
+                <div class="code-header">
+                    <div class="window-dots">
+                        <span class="dot dot-red"></span>
+                        <span class="dot dot-yellow"></span>
+                        <span class="dot dot-green"></span>
+                    </div>
+                    <span class="code-title">POST /api/v1/glucose/records</span>
+                    <i class="fa-regular fa-copy" style="color: var(--text-sub); cursor: pointer;"></i>
+                </div>
+                <div class="code-body">
+<pre><code>{
+  <span class="code-key">"user_id"</span>: <span class="code-string">"usr_8f92a10b"</span>,
+  <span class="code-key">"glucose_level"</span>: <span class="code-number">110</span>, <span class="code-comment">// mg/dL</span>
+  <span class="code-key">"measurement_context"</span>: <span class="code-string">"postprandial"</span>,
+  <span class="code-key">"timestamp"</span>: <span class="code-string">"2026-10-26T14:30:00Z"</span>,
+  <span class="code-key">"notes"</span>: <span class="code-string">"Almuerzo alto en fibra"</span>,
+  <span class="code-key">"device_info"</span>: {
+    <span class="code-key">"source"</span>: <span class="code-string">"Bluetooth_Glucometer"</span>,
+    <span class="code-key">"sync_status"</span>: <span class="code-string">"completed"</span>
+  }
+}</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Visual Showcase / Pixabay Cards -->
+        <section class="gallery-section">
+            <div class="section-header">
+                <h2>Casos de Uso Integrados</h2>
+                <p>Nuestra API alimenta ecosistemas que cuidan la vida diaria de miles de usuarios.</p>
+            </div>
+
+            <div class="gallery-grid">
+                <!-- Card 1 -->
+                <div class="glass-card gallery-card">
+                    <div class="gallery-img-container">
+                        <!-- Pixabay: Doctor / Salud -->
+                        <img src="https://cdn.pixabay.com/photo/2017/01/29/21/16/nurse-2019420_1280.jpg" alt="Seguimiento profesional">
+                    </div>
+                    <div class="gallery-content">
+                        <h3>Monitoreo Clínico</h3>
+                        <p>Plataformas que permiten a los médicos revisar el historial glucémico diario de sus pacientes de forma remota.</p>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="glass-card gallery-card">
+                    <div class="gallery-img-container">
+                        <!-- Pixabay: Mobile app / Phone -->
+                        <img src="https://cdn.pixabay.com/photo/2015/02/02/11/09/office-620822_1280.jpg" alt="App móvil de salud">
+                    </div>
+                    <div class="gallery-content">
+                        <h3>Apps Móviles "Aliado"</h3>
+                        <p>Integración directa en aplicaciones para smartphone con gráficos interactivos y alertas programables.</p>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="glass-card gallery-card">
+                    <div class="gallery-img-container">
+                        <!-- Pixabay: Bienestar / Comida saludable -->
+                        <img src="https://cdn.pixabay.com/photo/2017/05/11/19/44/fresh-fruits-2305192_1280.jpg" alt="Estilo de vida saludable">
+                    </div>
+                    <div class="gallery-content">
+                        <h3>Hábitos y Nutrición</h3>
+                        <p>Correlación entre niveles de azúcar en sangre e ingesta de alimentos para recomendaciones personalizadas.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Endpoints Table -->
+        <section id="endpoints" class="endpoints-section">
+            <div class="section-header">
+                <h2>Endpoints Principales</h2>
+                <p>Acceso directo a la gestión del registro de glucosa.</p>
+            </div>
+
+            <div class="glass-card table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Método</th>
+                            <th>Ruta Endpoint</th>
+                            <th>Descripción</th>
+                            <th>Acceso</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="method method-post">POST</span></td>
+                            <td class="endpoint-path">/api/v1/glucose/records</td>
+                            <td>Guarda un nuevo registro de medición glucémica.</td>
+                            <td>Privado (Bearer Token)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method method-get">GET</span></td>
+                            <td class="endpoint-path">/api/v1/glucose/history</td>
+                            <td>Obtiene el historial con filtros de fecha y contexto.</td>
+                            <td>Privado (Bearer Token)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method method-get">GET</span></td>
+                            <td class="endpoint-path">/api/v1/glucose/stats</td>
+                            <td>Calcula promedios, máximos y mínimos semanales/mensuales.</td>
+                            <td>Privado (Bearer Token)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method method-put">PUT</span></td>
+                            <td class="endpoint-path">/api/v1/users/thresholds</td>
+                            <td>Actualiza rangos de glucosa óptimos e hiper/hipoglucemia.</td>
+                            <td>Privado (Bearer Token)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fa-solid fa-heart-pulse" style="color: var(--light-blue);"></i> Aliado API
+                </div>
+                <ul class="footer-links">
+                    <li><a href="#">Términos y Condiciones</a></li>
+                    <li><a href="#">Privacidad de Datos</a></li>
+                    <li><a href="#">Soporte Técnico</a></li>
+                    <li><a href="#">Estado del Servidor</a></li>
+                </ul>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Aliado Health Platform. Todos los derechos reservados. Imágenes por Pixabay.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
